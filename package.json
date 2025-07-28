@@ -1,0 +1,49 @@
+{
+  "name": "backend.anthill.club",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "author": "Sheehan Rahman",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.204.0",
+    "@faker-js/faker": "^9.9.0",
+    "@slack/web-api": "^7.7.0",
+    "antopolis-express-utils": "^1.0.3",
+    "axios": "^1.5.0",
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-async-handler": "^1.2.0",
+    "express-fileupload": "^1.4.0",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
+    "mongoose": "^8.9.5",
+    "node-cron": "^3.0.3",
+    "resend": "^3.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.25.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-import": "^2.31.0",
+    "globals": "^15.14.0",
+    "nodemon": "^2.0.19"
+  },
+  "imports": {
+    "#models/*": "./models/*",
+    "#controllers/*": "./controllers/*",
+    "#routes/*": "./routes/*",
+    "#middleware/*": "./middleware/*",
+    "#services/*": "./services/*",
+    "#config/*": "./config/*",
+    "#utilities/*": "./utilities/*"
+  }
+}
