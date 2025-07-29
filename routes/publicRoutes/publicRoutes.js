@@ -9,7 +9,7 @@ const publicRoutes = Router()
 publicRoutes.route('/reports/analytics/:startDate/:endDate').get(getMonthlyData)
 publicRoutes.route("/saleAnalytics/:year/:month").get(getSaleAnalytics)
 publicRoutes.route('/topProductsByOrder/:startDate/:endDate').get(getTopProductsByOrder)
-publicRoutes.route("/topProductsByShop/:year/:month").get(getTopProductsByShop)
+publicRoutes.route("/topProductsByShop").get(getTopProductsByShop)
 
 
 export default publicRoutes
