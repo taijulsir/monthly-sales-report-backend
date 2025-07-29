@@ -14,11 +14,11 @@ import { OrderItem } from "#models/orderItem/orderItemModel.js";
             {
                 $group: {
                     _id: '$productId',  // Group by productId
-                    totalQuantity: { $sum: '$quantity' },  // Sum the total quantity for each product
+                    totalOrder: { $sum: '$quantity' },  // Sum the total quantity for each product
                 }
             },
             {
-                $sort: { totalQuantity: -1 }  // Sort by totalQuantity in descending order
+                $sort: { totalOrder: -1 }  // Sort by totalOrder in descending order
             },
             {
                 $limit: 10  // Limit to top 10 popular products (adjust as needed)
@@ -40,7 +40,7 @@ import { OrderItem } from "#models/orderItem/orderItemModel.js";
                     productId: '$_id',  // Include the productId
                     productName: '$productDetails.name',  // Product name
                     productImage: '$productDetails.image',  // Product image
-                    totalQuantity: 1  // Total quantity sold
+                    totalOrder: 1  // Total quantity sold
                 }
             }
         ]);

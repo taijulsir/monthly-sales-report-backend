@@ -1,5 +1,6 @@
 import { OrderItem } from '#models/orderItem/orderItemModel.js';
 import Store from '#models/store/storeModel.js';
+import { validateParams } from '#utils/validateParams.js';
 import { getDateRange } from './services/getDateRange.js';
 import { getProductsForShop } from './services/getProductsForShop.js';
 import { groupOrderItems } from './services/groupOrderItems.js';
@@ -9,6 +10,17 @@ import { sortData } from './services/sortData.js';
 // Main function to get top products by shop
 export const getTopProductsByShop = async (req, res) => {
     const { shopName, startDate, endDate, amount, priceRange } = req.query;
+
+    // Validate the parameters
+    const { valid, message } = validateParams({ startDate, endDate, amount, priceRange });
+
+    if (!valid) {
+        return res.status(400).json({
+            staus: 400,
+            data: null,
+            message
+        });
+    }
 
     // Get the date range
     const { startDate: rangeStart, endDate: rangeEnd } = getDateRange(startDate, endDate);
