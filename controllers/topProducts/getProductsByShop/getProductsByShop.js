@@ -77,13 +77,16 @@ export const getTopProductsByShop = async (req, res) => {
                     }
                 });
 
+            // Filter the populated orderItems to remove products where the price is greater than the priceRange
+            const filteredOrderItems = orderItems.filter(item => item.productId.salePrice <= priceRange);
+
             // If no order items found, return empty data using the helper function
-            if (orderItems.length === 0) {
+            if (filteredOrderItems.length === 0) {
                 return handleEmptyData(res, 'No products found');
             }
 
             // Step 3: Group order items by productId and storeId
-            const { products: groupedProducts, stores: groupedStores } = groupOrderItems(orderItems);
+            const { products: groupedProducts, stores: groupedStores } = groupOrderItems(filteredOrderItems);
 
             // Step 4: Sort the products and stores based on amount and price range
             const { sortedProducts, sortedStores } = sortData(groupedProducts, groupedStores, amount);
