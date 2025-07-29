@@ -1,31 +1,14 @@
-
- // Helper function to calculate income from order items
-const calculateIncome = (unitPrice, quantity, costPrice) => {
-    return (unitPrice * quantity) - (costPrice * quantity);
-};
-
-// Main Function to get total amounts for completed and refunded orders and calculate income
+// Main Function to get total amounts for completed and refunded orders and calculate income using reduce
 export const getTotalAmounts = (saleAnalytics) => {
-    // Initialize totals for completed and refunded orders
-    let totalCheckout = 0;
-    let totalRefunded = 0;
-    let totalIncome = 0;
-
-
-    // Process the aggregation results
-    saleAnalytics.forEach(analytics => {
+    const result = saleAnalytics.reduce((acc, analytics) => {
         if (analytics.status === 'Completed') {
-            totalCheckout = analytics.totalAmount;
-            totalIncome += calculateIncome(analytics.totalAmount, analytics.totalQuantity, analytics.totalCost);  // Calculate income for completed
+            acc.totalCheckout += analytics.totalAmount;  // Accumulate the total amount for completed orders
+            acc.totalIncome += analytics.totalAmount - analytics.totalCost;  // Calculate income for completed orders
         } else if (analytics.status === 'Refunded') {
-            totalRefunded = analytics.totalAmount;
+            acc.totalRefunded += analytics.totalAmount;  // Accumulate the total amount for refunded orders
         }
-    });
+        return acc;
+    }, { totalCheckout: 0, totalRefunded: 0, totalIncome: 0 });  // Initial accumulator values
 
-    return {
-        totalCheckout,
-        totalRefunded,
-        totalIncome
-    }
-
+    return result;
 }

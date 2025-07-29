@@ -14,7 +14,6 @@ export const getSaleAnalytics = async (req, res) => {
         // Define the date range for the given month
         const startDate = new Date(`${year}-${formattedMonth}-01T00:00:00Z`);
         const endDate = new Date(`${year}-${formattedMonth}-01T23:59:59Z`);
-
         endDate.setMonth(endDate.getMonth() + 1);  // Move to the next month to ensure we cover the whole month
 
         // Get the sale analytics data
