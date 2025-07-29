@@ -23,5 +23,5 @@ export const calculateMonthlyEarnings = async (startDate, endDate) => {
         return total + earnings;  // Accumulate the total earnings
     }, 0);  // Initial value for total is 0
 
-    return monthlyEarnings;
+    return Math.round(monthlyEarnings) ;  // Round the earnings to 2 decimal places
 };

@@ -5,5 +5,5 @@ export const calculateTotalOrders = async (startDate, endDate) => {
     const totalOrders = await Order.countDocuments({
         createdAt: { $gte: startDate, $lte: endDate }
     });
-    return totalOrders;
+    return totalOrders > 0 ? totalOrders : 0;
 };

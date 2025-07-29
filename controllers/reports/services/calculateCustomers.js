@@ -5,5 +5,5 @@ export const calculateCustomers = async (startDate, endDate) => {
     const customers = await Customer.countDocuments({
         createdAt: { $gte: startDate, $lte: endDate }
     });
-    return customers;
+    return customers > 0 ? customers : 0;
 };

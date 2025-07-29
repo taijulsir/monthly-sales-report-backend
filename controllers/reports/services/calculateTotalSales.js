@@ -20,5 +20,5 @@ export const calculateTotalSales = async (startDate, endDate) => {
         totalSales += item.totalSales;
     });
 
-    return totalSales;
+    return totalSales > 0 ? Math.round(totalSales) : 0;
 };

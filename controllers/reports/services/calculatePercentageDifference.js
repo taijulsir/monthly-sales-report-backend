@@ -3,7 +3,7 @@ const calculatePercentageChange = (current, previous) => {
     if (previous === 0) {
         return current > 0 ? 100 : 0;  // If previous is 0 and current is positive, it's a 100% increase; if current is 0, it's a 0% change
     }
-    return ((current - previous) / previous) * 100;
+    return Math.round(((current - previous) / previous) * 100);
 };
 
 export const calculatePercentageDifference = ({
