@@ -20,7 +20,7 @@ export const getSaleAnalytics = async (req, res) => {
         const saleAnalytics = await aggregateSaleAnalytics(startDate, endDate);
 
         // Calculate total amounts for completed and refunded orders and calculate income
-        const { totalCheckout, totalRefunded, totalIncome } = getTotalAmounts(saleAnalytics);
+        const { totalCheckout, totalRefunded } = getTotalAmounts(saleAnalytics);
 
 
         // Return the sale analytics response
@@ -28,9 +28,8 @@ export const getSaleAnalytics = async (req, res) => {
             message: 'Sale analytics data fetched successfully',
             staus: 200,
             data: {
-                totalCheckout,
-                totalRefunded,
-                totalIncome
+                totalCheckout: Math.round(totalCheckout),
+                totalRefunded: Math.round(totalRefunded)
             }
         });
     } catch (error) {

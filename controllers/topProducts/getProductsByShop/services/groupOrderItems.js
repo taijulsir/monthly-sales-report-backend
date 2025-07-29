@@ -7,12 +7,13 @@ export const groupOrderItems = (orderItems) => {
         const product = item.productId;
         const store = item.productId.storeId;
 
+
         // Group by productId
         if (!productMap.has(product._id)) {
             productMap.set(product._id, {
                 ...product.toObject(),
                 totalQuantity: item.quantity,
-                totalSale: item.unitPrice * item.quantity
+                totalSale: item.total
             });
         } else {
             const existingProduct = productMap.get(product._id);

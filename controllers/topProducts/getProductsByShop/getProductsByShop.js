@@ -71,7 +71,10 @@ export const getTopProductsByShop = async (req, res) => {
                 .find({ createdAt: { $gte: rangeStart, $lte: rangeEnd } })
                 .populate({
                     path: 'productId',
-                    populate: { path: 'storeId' }
+                    populate: {
+                        path: 'storeId',  // Nested population
+                        model: 'Store'    // Model for store (optional if mongoose can infer)
+                    }
                 });
 
             // If no order items found, return empty data using the helper function

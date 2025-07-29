@@ -3,12 +3,11 @@ export const getTotalAmounts = (saleAnalytics) => {
     const result = saleAnalytics.reduce((acc, analytics) => {
         if (analytics.status === 'Completed') {
             acc.totalCheckout += analytics.totalAmount;  // Accumulate the total amount for completed orders
-            acc.totalIncome += analytics.totalAmount - analytics.totalCost;  // Calculate income for completed orders
         } else if (analytics.status === 'Refunded') {
             acc.totalRefunded += analytics.totalAmount;  // Accumulate the total amount for refunded orders
         }
         return acc;
-    }, { totalCheckout: 0, totalRefunded: 0, totalIncome: 0 });  // Initial accumulator values
+    }, { totalCheckout: 0, totalRefunded: 0 });  // Initial accumulator values
 
     return result;
 }

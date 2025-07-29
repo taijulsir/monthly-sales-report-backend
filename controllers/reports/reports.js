@@ -1,4 +1,5 @@
 import { getPreviousMonthRange } from '#utils/getPreviousMonthRange.js';
+import { isValidDate } from '#utils/validateParams.js';
 import { calculateCurrentMonthMetrics } from './services/calculateCurrentMonthMetrics.js';
 import { calculatePercentageDifference } from './services/calculatePercentageDifference.js';
 import { calculatePreviousMonthMetrics } from './services/calculatePreviousMonthMetrics.js';
@@ -7,6 +8,16 @@ import { calculatePreviousMonthMetrics } from './services/calculatePreviousMonth
 export const getMonthlyData = async (req, res) => {
     const { startDate, endDate } = req.params;
 
+    // Validate the parameters
+    const { valid, message } = validateParams({ startDate, endDate });
+
+    if (!valid) {
+        return res.status(400).json({
+            staus: 400,
+            data: null,
+            message
+        });
+    }
     // Get the previous month's start and end dates
     const { previousStartDate, previousEndDate } = getPreviousMonthRange(startDate, endDate);
 
@@ -58,5 +69,20 @@ export const getMonthlyData = async (req, res) => {
             error: error.message
         });
     }
+};
+
+
+const validateParams = (params) => {
+    const { startDate, endDate } = params;
+
+    // Validate startDate and endDate
+    if (startDate && !isValidDate(startDate)) {
+        return { valid: false, message: "Invalid startDate format. Expected YYYY-MM-DD." };
+    }
+    if (endDate && !isValidDate(endDate)) {
+        return { valid: false, message: "Invalid endDate format. Expected YYYY-MM-DD." };
+    }
+
+    return { valid: true };  // All validations passed
 };
 
