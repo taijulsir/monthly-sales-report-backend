@@ -3,9 +3,8 @@ import { aggregateSaleAnalytics } from "./services/aggregateSaleAnalytics.js";
 import { getTotalAmounts } from "./services/getTotalAmounts.js";
 
 
-
 // Controller to get sale analytics (Completed and Refunded orders) for the given month and year
-const getSaleAnalytics = async (req, res) => {
+export const getSaleAnalytics = async (req, res) => {
     const { year, month } = req.params;
 
     // Ensure the month is 2 digits (e.g., 03 for March)
@@ -45,4 +44,3 @@ const getSaleAnalytics = async (req, res) => {
     }
 };
 
-export { getSaleAnalytics };

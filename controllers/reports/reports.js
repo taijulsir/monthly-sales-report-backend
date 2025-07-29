@@ -4,7 +4,7 @@ import { calculatePercentageDifference } from './services/calculatePercentageDif
 import { calculatePreviousMonthMetrics } from './services/calculatePreviousMonthMetrics.js';
 
 // Main function to get all metrics for the current month and previous month comparison
-const getMonthlyData = async (req, res) => {
+export const getMonthlyData = async (req, res) => {
     const { startDate, endDate } = req.params;
 
     // Get the previous month's start and end dates
@@ -60,4 +60,3 @@ const getMonthlyData = async (req, res) => {
     }
 };
 
-export { getMonthlyData };
