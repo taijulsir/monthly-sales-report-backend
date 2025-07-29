@@ -1,3 +1,4 @@
+import { getSaleAnalytics } from '#controllers/analytics/analytics.js'
 import { getMonthlyData } from '#controllers/reports/reports.js'
 import { Router } from 'express'
 

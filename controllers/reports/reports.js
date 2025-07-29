@@ -31,6 +31,7 @@ const getMonthlyData = async (req, res) => {
         // Return the response with all the metrics and comparisons
         res.status(200).json({
             message: 'Monthly data generated successfully',
+            staus: 200,
             data: {
                 currentEarnings,
                 currentOrders,
@@ -51,7 +52,11 @@ const getMonthlyData = async (req, res) => {
     } catch (error) {
         // Handle any errors
         console.error(error);
-        res.status(500).json({ message: 'Failed to generate monthly data', error: error.message });
+        res.status(500).json({
+            message: 'Failed to generate monthly data',
+            staus: 500,
+            error: error.message
+        });
     }
 };
 
