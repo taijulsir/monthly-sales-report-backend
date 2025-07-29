@@ -44,6 +44,6 @@
     "#middleware/*": "./middleware/*",
     "#services/*": "./services/*",
     "#config/*": "./config/*",
-    "#utilities/*": "./utilities/*"
+    "#utils/*": "./utils/*"
   }
 }
