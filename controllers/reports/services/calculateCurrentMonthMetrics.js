@@ -1,5 +1,5 @@
+import { calculateCustomers } from './calculateCustomers.js';
 import { calculateMonthlyEarnings } from './calculateMonthlyEarnings.js';
-import { calculateNewCustomers } from './calculateNewCustomers.js';
 import { calculateTotalOrders } from './calculateTotalOrders.js';
 import { calculateTotalSales } from './calculateTotalSales.js';
 
@@ -8,7 +8,7 @@ export const calculateCurrentMonthMetrics = async (startDate, endDate) => {
     const currentEarnings = await calculateMonthlyEarnings(startDate, endDate);
     const currentOrders = await calculateTotalOrders(startDate, endDate);
     const currentSales = await calculateTotalSales(startDate, endDate);
-    const currentCustomers = await calculateNewCustomers(startDate, endDate);
+    const currentCustomers = await calculateCustomers(startDate, endDate);
 
     return {
         currentEarnings,

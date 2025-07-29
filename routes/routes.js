@@ -3,6 +3,7 @@ import publicRoutes from './publicRoutes/publicRoutes.js'
 import { insertData } from '#controllers/insertData/insertData.js'
 import { OrderItem } from '#models/orderItem/orderItemModel.js'
 import { Order } from '#models/order/orderModel.js'
+import { Product } from '#models/product/productModel.js'
 
 const routes = Router()
 

@@ -1,6 +1,6 @@
 
+import { calculateCustomers } from './calculateCustomers.js';
 import { calculateMonthlyEarnings } from './calculateMonthlyEarnings.js';
-import { calculateNewCustomers } from './calculateNewCustomers.js';
 import { calculateTotalOrders } from './calculateTotalOrders.js';
 import { calculateTotalSales } from './calculateTotalSales.js';
 
@@ -9,7 +9,7 @@ export const calculatePreviousMonthMetrics = async (previousStartDate, previousE
     const previousEarnings = await calculateMonthlyEarnings(previousStartDate, previousEndDate);
     const previousOrders = await calculateTotalOrders(previousStartDate, previousEndDate);
     const previousSales = await calculateTotalSales(previousStartDate, previousEndDate);
-    const previousCustomers = await calculateNewCustomers(previousStartDate, previousEndDate);
+    const previousCustomers = await calculateCustomers(previousStartDate, previousEndDate);
 
     return {
         previousEarnings,
