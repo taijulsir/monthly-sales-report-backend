@@ -23,8 +23,8 @@ const orderItemSchema = new mongoose.Schema({
     total: {
         type: Number,
         required: true
-    }  // unitPrice * quantity
-});
+    }  // unitPrice * quantity,
+}, { timestamps: true });
 
 // Models
 const OrderItem = mongoose.model('OrderItem', orderItemSchema);
