@@ -1,133 +1,93 @@
 import { OrderItem } from '#models/orderItem/orderItemModel.js';
-import { Product } from '#models/product/productModel.js';
 import Store from '#models/store/storeModel.js';
 import { getDateRange } from './services/getDateRange.js';
+import { getProductsForShop } from './services/getProductsForShop.js';
+import { groupOrderItems } from './services/groupOrderItems.js';
+import { handleEmptyData } from './services/handleEmptyData.js';
+import { sortData } from './services/sortData.js';
 
-
-
-
-export const getTopProdcutsByShop = async (req, res) => {
+// Main function to get top products by shop
+export const getTopProductsByShop = async (req, res) => {
     const { shopName, startDate, endDate, amount, priceRange } = req.query;
 
     // Get the date range
     const { startDate: rangeStart, endDate: rangeEnd } = getDateRange(startDate, endDate);
 
     try {
-
+        // Step 1: If shopName is provided, find the shop and fetch its products
         if (shopName) {
-            // Use Regex for partial matching and case-insensitive search
             const shop = await Store.findOne({
                 name: { $regex: shopName, $options: 'i' }  // Case-insensitive search
             });
 
-            // If the shop is not found, return an empty array
             if (!shop) {
-                return res.status(200).json({
-                    message: 'Shop not found',
-                    data: {
-                        products: [],
-                        shops: []
-                    }
-                });
+                // Use the helper function for empty shop response
+                return handleEmptyData(res, 'Shop not found');
             }
 
-            const products = await Product.find({ storeId: shop._id });
+            // Fetch products for the found shop
+            const products = await getProductsForShop(shop._id, priceRange, amount);
+
+            // Fetch order items for the given products and date range
             const orderItems = await OrderItem.find({
                 createdAt: { $gte: rangeStart, $lte: rangeEnd },
-                productId: { $in: products.map(product => product._id) },
-                
-            });
+                productId: { $in: products.map(product => product._id) }
+            }).populate('productId');
 
             if (orderItems.length === 0) {
-                return res.status(200).json({
-                    message: 'No products found',
-                    data: {
-                        products: [],
-                        shops: [shop]
-                    }
-                });
+                // Use the helper function for empty order items response
+                return handleEmptyData(res, 'No products found', { products: [], shops: [shop] });
             }
 
-            // then need to sort product by  low to high or high to low 
+            const totalSale = orderItems.reduce((total, oi) => total + oi.total, 0);
 
+            return res.status(200).json({
+                message: `${shop.name} products fetched successfully`,
+                status: 200,
+                data: {
+                    products: products.slice(0, 4), // Return top 4 products
+                    shops: [{
+                        ...shop.toObject(),
+                        totalSale // Include total sale in shop data
+                    }]
+                }
+            });
 
+        } else {
+            // Step 2: If no shopName is provided, fetch all order items
+            const orderItems = await OrderItem
+                .find({ createdAt: { $gte: rangeStart, $lte: rangeEnd } })
+                .populate({
+                    path: 'productId',
+                    populate: { path: 'storeId' }
+                });
 
+            // If no order items found, return empty data using the helper function
+            if (orderItems.length === 0) {
+                return handleEmptyData(res, 'No products found');
+            }
 
+            // Step 3: Group order items by productId and storeId
+            const { products: groupedProducts, stores: groupedStores } = groupOrderItems(orderItems);
 
+            // Step 4: Sort the products and stores based on amount and price range
+            const { sortedProducts, sortedStores } = sortData(groupedProducts, groupedStores, amount);
 
+            return res.status(200).json({
+                message: 'Top products fetched successfully',
+                status: 200,
+                data: {
+                    products: sortedProducts.slice(0, 4), // Return top 4 products
+                    shops: sortedStores.slice(0, 4) // Return top 4 stores
+                }
+            });
         }
 
-        // Prepare the match conditions for the query
-        const matchConditions = {
-            createdAt: { $gte: rangeStart, $lte: rangeEnd },
-            storeId: shop._id // Filter products by storeId
-        };
-
-        // Aggregation pipeline to get popular products (top 4) from order items
-        const popularProducts = await OrderItem.aggregate([
-            {
-                $match: matchConditions,  // Filter by date range and storeId
-            },
-            {
-                $lookup: {
-                    from: 'products',  // Lookup to get product details
-                    localField: 'productId',
-                    foreignField: '_id',
-                    as: 'productDetails'
-                }
-            },
-            {
-                $unwind: '$productDetails'  // Unwind to get the product data
-            },
-            {
-                $group: {
-                    _id: '$productId',  // Group by productId
-                    totalQuantity: { $sum: '$quantity' },  // Total quantity sold
-                    totalSales: { $sum: { $multiply: ['$unitPrice', '$quantity'] } },  // Total sales (unitPrice * quantity)
-                    totalCost: { $sum: { $multiply: ['$productDetails.costPrice', '$quantity'] } },  // Total cost (costPrice * quantity)
-                }
-            },
-            {
-                $sort: { totalSales: priceRange === 'Low to High' ? 1 : -1 }  // Sorting based on total sales (amount)
-            },
-            {
-                $limit: 4  // Limit to top 4 products
-            },
-            {
-                $lookup: {
-                    from: 'stores',  // Lookup to get store details
-                    localField: '_id',
-                    foreignField: 'productId',
-                    as: 'storeDetails'
-                }
-            },
-            {
-                $unwind: '$storeDetails'  // Unwind the storeDetails
-            },
-            {
-                $project: {
-                    productId: 1,
-                    totalQuantity: 1,
-                    totalSales: 1,
-                    totalCost: 1,
-                    storeId: '$storeDetails._id',
-                    storeName: '$storeDetails.name',
-                    storeLocation: '$storeDetails.location',
-                    productName: '$productDetails.name',
-                    productImage: '$productDetails.image',
-                    price: '$productDetails.salePrice' // Include product price for price range sorting
-                }
-            }
-        ]);
-
-        // Return the popular products with their details
-        res.status(200).json({
-            message: 'Top products fetched successfully',
-            data: popularProducts
-        });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error fetching popular products', error: error.message });
+        res.status(500).json({
+            message: 'Error fetching popular products',
+            error: error.message
+        });
     }
 };
-
