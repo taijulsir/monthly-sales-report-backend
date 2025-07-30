@@ -1,3 +1,4 @@
+import { formatDate } from '#utils/formatDate.js';
 import { getPreviousMonthRange } from '#utils/getPreviousMonthRange.js';
 import { isValidDate } from '#utils/validateParams.js';
 import { calculateCurrentMonthMetrics } from './services/calculateCurrentMonthMetrics.js';
@@ -18,12 +19,20 @@ export const getMonthlyData = async (req, res) => {
             message
         });
     }
+
+    
+    //formateed startDate and endDate in Date format
+    const formattedStartDate = formatDate(startDate);
+    const formattedEndDate = formatDate(endDate);
+    formattedEndDate.setHours(23, 59, 59, 999); // Include entire day
+
+
     // Get the previous month's start and end dates
-    const { previousStartDate, previousEndDate } = getPreviousMonthRange(startDate, endDate);
+    const { previousStartDate, previousEndDate } = getPreviousMonthRange(formattedStartDate, formattedEndDate);
 
     try {
         // Calculate the current month's earnings, orders, sales, and customers
-        const { currentEarnings, currentOrders, currentSales, currentCustomers } = await calculateCurrentMonthMetrics(startDate, endDate);
+        const { currentEarnings, currentOrders, currentSales, currentCustomers } = await calculateCurrentMonthMetrics(formattedStartDate, formattedEndDate);
 
         // Calculate the previous month's earnings, orders, sales, and customers
         const { previousEarnings, previousOrders, previousSales, previousCustomers } = await calculatePreviousMonthMetrics(previousStartDate, previousEndDate);
