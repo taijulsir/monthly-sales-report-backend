@@ -1,24 +1,25 @@
+import { Order } from "#models/order/orderModel.js";
 import { OrderItem } from "#models/orderItem/orderItemModel.js";
 
 export const calculateTotalSales = async (startDate, endDate) => {
-    const orderItems = await OrderItem.aggregate([
+
+    const orderAggregation = await Order.aggregate([
         {
             $match: {
+                status: 'Completed',
                 createdAt: { $gte: startDate, $lte: endDate }
             }
         },
         {
             $group: {
-                _id: "$productId",
-                totalSales: { $sum: { $multiply: ["$unitPrice", "$quantity"] } }
+                _id: null,
+                totalOrderAmount: { $sum: "$totalAmount" }
             }
         }
     ]);
 
-    let totalSales = 0;
-    orderItems.forEach(item => {
-        totalSales += item.totalSales;
-    });
+    const totalOrderAmount = orderAggregation.length > 0 ? Math.round(orderAggregation[0].totalOrderAmount) : 0;
 
-    return totalSales > 0 ? Math.round(totalSales) : 0;
+
+    return totalOrderAmount;
 };
